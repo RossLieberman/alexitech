@@ -1,18 +1,9 @@
 ACTIVITY
 --------
-TV
-Watch TV
-DVD
-Watch DVD
-Watch a DVD
-Movie
-Watch Movie
-Watch a Movie
-Game
-Play a Game
-Play Xbox
-Play Wii
-Play Playstation
+Media Center
+Sonos
+Sonos + MC
+Listen to Radio
 
 BUTTON
 ------
@@ -161,7 +152,13 @@ Yellow
 
 SEQUENCE
 --------
-
+Temporary
 
 DEVICE
 ------
+Media Center PC
+TV
+AV Receiver
+Master Bedroom
+Living Room
+Portable

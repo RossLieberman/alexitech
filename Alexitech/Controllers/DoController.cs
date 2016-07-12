@@ -44,12 +44,27 @@ namespace Alexitech.Controllers
         {
             //var input = new JavaScriptSerializer().DeserializeObject(json);
 
+            //root.Request = new AlexaRequest
+            //{
+            //    Intent = new AlexaIntent { Name = "VolumeUpIntent" },
+            //    RequestID = "EdwRequestId.ef136b8d-88cf-4b6b-b2a5-1c3837a99a3a",
+            //    Timestamp = "2016-07-10T00:51:09Z",
+            //    Type = "IntentRequest"
+            //};
+            //root.Session = new AlexaSession
+            //{
+            //    New = true,
+            //    SessionID = "SessionId.8afdd470-ef9b-4ce3-a21e-7e06ebb3472b",
+            //    User = new AlexaUser { UserID = "amzn1.ask.account.AFP3ZWPOS2BGJR7OWJZ3DHPKMOMNWY4AY66FUR7ILBWANIHQN73QHDOKJGQAVFPBTDLXZA4WRO6FUYCI77PPCCLMNCGYTO77EPRIIKHHRTMDLQODCLF2VSNJ6UEGIA5YFZUCTEN5NFZ7THK2DUECPFNK5KSKHIOSA2KVZBFZBP4B5VCPGMIBTMWI22RQ25XOJWQCKJOYLBR5UIQ" }
+            //};
+            //root.Version = "1.0";
+
             bool success = false;
             string speech = null;
             bool inListen = false;
             object card = null;
 
-            if (root == null || root.Request == null || !IsTimestampValid(root.Request.Timestamp))
+            if (root == null || root.Request == null || (!IsTest && !IsTimestampValid(root.Request.Timestamp)))
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             User user = null;
@@ -64,12 +79,12 @@ namespace Alexitech.Controllers
                         inListen = true;
                 }
 
-                if (session.User != null && session.User.AccessToken != null)
+                if (session.User != null)// && session.User.AccessToken != null)
                 {
                     using (var manager = new Manager())
                     {
                         user = manager.Users
-                            .FirstOrDefault(o => o.AlexaToken == session.User.AccessToken);
+                            .FirstOrDefault();//o => o.AlexaToken == session.User.AccessToken);
 
                         if (user != null)
                         {
@@ -233,9 +248,10 @@ namespace Alexitech.Controllers
 
         public ActionResult Test(string name)
         {
+            User user;
             using (Manager m = new Manager())
             {
-                var user = m.Users.FirstOrDefault();
+                user = m.Users.FirstOrDefault();
 
                 //var auth = new HarmonyAuthenticationClient(user.Hostname, 5222);
 
@@ -259,16 +275,16 @@ namespace Alexitech.Controllers
 
                 //return Content(speech);
 
-                var values = new Dictionary<string, string>();
-                values["Button"] = "volume down";
+                //var values = new Dictionary<string, string>();
+                //values["Button"] = "volume down";
 
-                string speech;
-                Command(user, "ButtonIntent", values, out speech);
-                Command(user, "ButtonIntent", values, out speech);
-                Command(user, "ButtonIntent", values, out speech);
-                Command(user, "ButtonIntent", values, out speech);
+                //string speech;
+                //Command(user, "ButtonIntent", values, out speech);
+                //Command(user, "ButtonIntent", values, out speech);
+                //Command(user, "ButtonIntent", values, out speech);
+                //Command(user, "ButtonIntent", values, out speech);
 
-                return Content(speech);
+                //return Content(speech);
 
                 //var values = new Dictionary<string, string>();
                 //values["Button"] = "mute";
@@ -302,6 +318,64 @@ namespace Alexitech.Controllers
                 //    }
                 //}
             }
+
+            if (user == null)
+            {
+                var linkResponse = new
+                {
+                    version = "1.0",
+                    sessionAttributes = new
+                    {
+                        inListen = "false"
+                    },
+                    response = new
+                    {
+                        outputSpeech = new
+                        {
+                            type = "PlainText",
+                            text = "Error while testing, unable to find account."
+                        },
+                        card = new
+                        {
+                            type = "LinkAccount"
+                        },
+                        shouldEndSession = true
+                    }
+                };
+
+                return Json(linkResponse, JsonRequestBehavior.AllowGet);
+            }
+
+            var root = new AlexaRoot();
+            root.Request = new AlexaRequest
+            {
+                Intent = new AlexaIntent
+                {
+                    Name = "ButtonIntent",
+                    Slots = new Dictionary<string, AlexaSlot>
+                    {
+                        {
+                            "Button",
+                            new AlexaSlot
+                            {
+                                Name = "button", Value = "play"
+                            }
+                        }
+                    }
+                },
+                RequestID = "EdwRequestId.ef136b8d-88cf-4b6b-b2a5-1c3837a99a3a",
+                Timestamp = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"), // "2016-07-10T00:51:09Z",
+                Type = "IntentRequest"
+            };
+            root.Session = new AlexaSession
+            {
+                New = true,
+                SessionID = "SessionId.8afdd470-ef9b-4ce3-a21e-7e06ebb3472b",
+                User = new AlexaUser { UserID = "amzn1.ask.account.AFP3ZWPOS2BGJR7OWJZ3DHPKMOMNWY4AY66FUR7ILBWANIHQN73QHDOKJGQAVFPBTDLXZA4WRO6FUYCI77PPCCLMNCGYTO77EPRIIKHHRTMDLQODCLF2VSNJ6UEGIA5YFZUCTEN5NFZ7THK2DUECPFNK5KSKHIOSA2KVZBFZBP4B5VCPGMIBTMWI22RQ25XOJWQCKJOYLBR5UIQ" }
+            };
+            root.Version = "1.0";
+
+            return Index(root);
         }
 
         private HarmonyClient GetHarmonyClient(User user)

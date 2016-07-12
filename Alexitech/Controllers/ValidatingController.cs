@@ -23,6 +23,12 @@ namespace Alexitech.Controllers
 {
     public class ValidatingController : Controller
     {
+        protected bool IsTest
+        {
+            get { return (RouteData.Values["controller"].ToString().Equals("do", StringComparison.OrdinalIgnoreCase) 
+                            && RouteData.Values["action"].ToString().Equals("test", StringComparison.OrdinalIgnoreCase)); }
+        }
+
         protected override void OnAuthorization(AuthorizationContext filterContext)
         {
             bool success = false;
@@ -51,7 +57,7 @@ namespace Alexitech.Controllers
                 }
             }
 
-            if (!success)
+            if (!success && !IsTest)
                 filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             base.OnAuthorization(filterContext);

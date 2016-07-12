@@ -53,7 +53,7 @@ Application Configuration
 
 Some values need to be set in the web.config file to configure the application:
 
-- "AuthUrl" is the URL provided when you configure the Alexa Skill for authentication
+- "AuthUrl" is the URL provided from Amazon when you configure the Alexa Skill for authentication, which is listed as the RedirectUrl
 - The "Manager" connection string needs to have the correct authentication values set for your database.
 
 Database Setup
@@ -75,7 +75,7 @@ This section lists the necessary configuration values when creating the Alexa Sk
 ##### Interaction Model 
 
 - Intent Schema: [Contents of the "intent schema.txt" file]
-- Custom Slot Types: [Contents of the "intent custom slot types.txt" file]
+- Custom Slot Types: [Contents of the "intent custom slot types.txt" file. Replace Activities/Devices with your own remotes values]
 - Sample Utterances: [Contents of the "intent sample utterances" file]
 
 ##### Configuration 
@@ -87,11 +87,11 @@ This section lists the necessary configuration values when creating the Alexa Sk
 - Authorization Grant Type: Implicit Grant
 - Privacy Policy URL: [Base URL]/Help/Privacy
 
-Copy the "Redirect URL" value to the application's web.config file.
+Copy the "Redirect URL" value to the application's web.config file for AuthUrl.
 
 ##### SSL Certificate 
 
-Follow the instructions for creating a self-signed certificate, if necessary.
+Follow the instructions for creating a self-signed certificate, if necessary. (As described here)[https://freebusy.io/blog/getting-started-with-alexa-app-development-for-amazon-echo-using-dot-net]
 
 ##### Publishing Information 
 
